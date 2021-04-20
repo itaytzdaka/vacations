@@ -1,0 +1,11 @@
+{
+    "mysql": {
+        "host": "eu-cdbr-west-03.cleardb.net",
+        "user": "be50a22ebd8cb6",
+        "password": "d3668478",
+        "database": "heroku_3f867151ba0f2da"
+    },
+    "jwt": {
+        "secretKey": "ILoveKittens"
+    }
+}
