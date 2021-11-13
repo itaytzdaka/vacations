@@ -9,6 +9,7 @@ const socketIO = require("socket.io");
 const authController = require("./controllers/auth-controller");
 const vacationsController = require("./controllers/vacations-controller");
 const followsController = require("./controllers/follows-controller");
+const purchaseController=require("./controllers/purchases-controller");
 const server = express();
 const path = require("path");
 
@@ -28,6 +29,7 @@ server.use(express.static(path.join(__dirname, "./_front-end")));
 server.use("/api/auth", authController);
 server.use("/api/vacations", vacationsController);
 server.use("/api/follows", followsController);
+server.use("/api/purchases", purchaseController);
 
 server.use("*", (request, response) => {
     response.sendFile(path.join(__dirname, "./_front-end/index.html"));

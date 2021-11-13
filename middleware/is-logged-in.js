@@ -23,6 +23,8 @@ function isLoggedIn(request, response, next) {
             // If token expired: 
             if (err.message == "jwt expired") {
                 response.status(403).send("Your login session has expired");
+                console.log("response");
+                console.log(response);
                 return;
             }
 
