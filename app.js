@@ -13,16 +13,17 @@ const purchaseController=require("./controllers/purchases-controller");
 const server = express();
 const path = require("path");
 
-server.use(session({
-    name: "CandyShopSession", // Name of the Cookie
-    secret: "CuteKittens", // Encryption key for the session id
-    resave: true, // Start counting session time on each request.
-    saveUninitialized: false // Don't create session automatically.
-}));
+// server.use(session({
+//     name: "CandyShopSession", // Name of the Cookie
+//     secret: "CuteKittens", // Encryption key for the session id
+//     resave: true, // Start counting session time on each request.
+//     saveUninitialized: false // Don't create session automatically.
+// }));
 server.use(cors({
     origin: "http://localhost:3001",
     credentials: true
 }));
+// server.use(cors());
 server.use(express.json());
 server.use(express.static(path.join(__dirname, "./_front-end")));
 

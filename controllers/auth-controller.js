@@ -36,13 +36,13 @@ router.post("/register", async (request, response) => {
 
 router.post("/login", async (request, response) => {
     try {
-        const credentials = request.body;        
+        const credentials = request.body;  
+ 
         const user = await authLogic.login(credentials);
         if (!user) {
             response.status(401).send("Illegal username or password");
             return;
         }
-
         const token = jwt.sign({ user }, config.jwt.secretKey, { expiresIn: "30m" });
         response.json({ user, token });
     }
