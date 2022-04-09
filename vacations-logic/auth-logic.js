@@ -9,7 +9,7 @@ async function register(user) {
         '${user.password}',
         0)`; // 0 = Not Admin
 
-    const info = await dal.executeAsync(sql);
+    await dal.executeAsync(sql);
     user.isAdmin = 0;
     return user;
 }
@@ -26,7 +26,7 @@ async function login(credentials) {
 
 //update a user
 async function updateFullUser(user) {
-    const sql = `UPDATE users SET firstName = '${user.firstName}', lastName = '${user.lastName}', userName = '${user.userName}', password = '${user.password}', isAdmin = ${user.isAdmin} WHERE userName = '${user.userName}'`;
+    const sql = `UPDATE users SET firstName = '${user.firstName}', lastName = '${user.lastName}', password = '${user.password}', isAdmin = ${user.isAdmin} WHERE userName = '${user.userName}'`;
     const info = await dal.executeAsync(sql);
     return info.affectedRows === 0 ? null : user;
 };

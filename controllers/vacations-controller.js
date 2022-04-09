@@ -3,12 +3,13 @@ const vacationsLogic = require("../vacations-logic/vacations-logic");
 const isLoggedIn = require("../middleware/is-logged-in");
 const isAdmin = require("../middleware/is-admin");
 const Vacation = require("../models/vacation-model");
+const fs = require("fs");
 
 const router = express.Router();
 
 router.use(isLoggedIn);
 
-//get all vacations
+//GET - get all vacations - http://localhost:3000/api/vacations
 router.get("/", async (request, response) => {
     try {
         const vacations = await vacationsLogic.getAllVacations();
@@ -19,7 +20,7 @@ router.get("/", async (request, response) => {
     }
 });
 
-//get one vacation
+//GET - get one vacation - http://localhost:3000/api/vacations/:id
 router.get("/:id", async(request, response) => {
     try {
         const id = +request.params.id;
@@ -35,14 +36,16 @@ router.get("/:id", async(request, response) => {
     }
 });
 
-//add vacation
+//POST - add vacation - http://localhost:3000/api/vacations
 router.post("/",isAdmin, async (request, response) => {
     try {
+
         const v = request.body;
         const vacation = new Vacation(undefined, v.description, v.destination, v.img, v.startingDate, v.endingDate, v.price);
 
-        // Validate vacation data: 
-        const errors = vacation.validatePost();
+
+        //Validate vacation data: 
+        const errors = vacation.validatePostOrPut();
 
         if(errors) {
             response.status(400).send(errors);
@@ -61,19 +64,36 @@ router.post("/",isAdmin, async (request, response) => {
     }
 });
 
-//update full vacation
+//PUT - update full vacation - http://localhost:3000/api/vacations/:id
 router.put("/:id",isAdmin, async (request, response) => {
     try {
         const id = +request.params.id;
         const v = request.body;
+
         const vacation = new Vacation(id, v.description, v.destination, v.img, v.startingDate, v.endingDate, v.price);
 
-        const errors = vacation.validatePut();
+        // Validate vacation data: 
+        const errors = vacation.validatePostOrPut();
 
         if(errors) {
             response.status(400).send(errors);
             return;
         }
+
+        let oldVacation = new Vacation();
+        oldVacation = await vacationsLogic.getOneVacation(id);
+
+        if(oldVacation.img !== vacation.img){
+            fs.access("_front-end/assets/images/vacations/" + oldVacation.img, (err)=>{
+                if(err) return;
+    
+                fs.unlink("_front-end/assets/images/vacations/" + oldVacation.img, (err)=> {
+                    if (err) throw err;
+                });
+            });
+        }
+
+
 
         const updatedVacation =await vacationsLogic.updateFullVacation(vacation);
         if (!updatedVacation) {
@@ -88,11 +108,25 @@ router.put("/:id",isAdmin, async (request, response) => {
 });
 
 
-// DELETE vacation
-router.delete("/:id",isAdmin, (request, response) => {
+//DELETE - delete a vacation - http://localhost:3000/api/vacations/:id
+router.delete("/:id",isAdmin, async (request, response) => {
     try {
         const id = +request.params.id;
-        vacationsLogic.deleteVacation(id);
+        let vacation = new Vacation();
+        vacation = await vacationsLogic.getOneVacation(id);
+
+        await vacationsLogic.deleteVacation(id);
+
+        fs.access("_front-end/assets/images/vacations/" + vacation.img, (err)=>{
+            if(err) return;
+
+            fs.unlink("_front-end/assets/images/vacations/" + vacation.img, (err)=> {
+                if (err) throw err;
+            });
+        });
+
+
+
         response.sendStatus(204);
     }
     catch (err) {

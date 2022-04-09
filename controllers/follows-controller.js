@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.use(isLoggedIn);
 
-//get all follows
+//GET - get all follows - http://localhost:3000/api/follows
 router.get("/", async (request, response) => {
     try {
         const follows = await followsLogic.getAllFollows();
@@ -16,23 +16,29 @@ router.get("/", async (request, response) => {
     }
 });
 
-//add follow
+//Post - add follow - http://localhost:3000/api/follows
 router.post("/", async (request, response) => {
     try {
-        const follow = request.body;
-        const addedFollow = await followsLogic.addFollow(follow);
-        response.status(201).json(addedFollow);
+        const followToAdd = request.body;
+        const follow=await followsLogic.getOneFollow(followToAdd);
+
+        if(!follow){
+            const addedFollow = await followsLogic.addFollow(followToAdd);
+            response.status(201).json(addedFollow);
+        }
+
+        response.status(201).json(follow);
     }
     catch (err) {
         response.status(500).send(err.message);
     }
 });
 
-// DELETE follow
-router.delete("/:id", (request, response) => {
+//DELETE - delete follow - http://localhost:3000/api/follows/:id
+router.delete("/:id", async (request, response) => {
     try {
         const id = +request.params.id;
-        followsLogic.deleteFollow(id);
+        await followsLogic.deleteFollow(id);
         response.sendStatus(204);
     }
     catch (err) {

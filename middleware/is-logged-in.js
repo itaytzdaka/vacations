@@ -16,15 +16,13 @@ function isLoggedIn(request, response, next) {
     }
 
     // We have the token here - verify it:
-    jwt.verify(token, config.jwt.secretKey, (err, payload) => {
+    jwt.verify(token, config.jwt.ACCESS_TOKEN_SECRET, (err, payload) => {
 
         // If token expired or not legal:
         if (err) {
             // If token expired: 
             if (err.message == "jwt expired") {
                 response.status(403).send("Your login session has expired");
-                console.log("response");
-                console.log(response);
                 return;
             }
 
@@ -33,10 +31,7 @@ function isLoggedIn(request, response, next) {
             return;
         }
         const user=payload.user;
-
-
-        const newToken = jwt.sign({ user }, config.jwt.secretKey, { expiresIn: "30m" });
-        response.set('new-token',newToken);
+  
         next();
     });
 }

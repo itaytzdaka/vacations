@@ -3,7 +3,6 @@ const dal = require("../data-access-layer/dal");
 //get all vacations
 async function getAllVacations() {
     const sql = "SELECT * FROM Vacations";
-    // Need to create a JOIN sql to bring also the dish name
     const vacations = await dal.executeAsync(sql);
     return vacations;
 }
@@ -20,7 +19,6 @@ async function addVacation(vacation) {
     const sql = `INSERT INTO vacations(description, destination, img, startingDate, endingDate, price)
         VALUES ('${vacation.description}','${vacation.destination}','${vacation.img}','${vacation.startingDate}','${vacation.endingDate}',${vacation.price})`;
     const info = await dal.executeAsync(sql);
-
 
     vacation.vacationId = info.insertId;
     return vacation;

@@ -5,7 +5,20 @@ function isAdmin(request, response, next) {
 
     const token = request.headers.authorization.split(" ")[1];
 
-    jwt.verify(token, config.jwt.secretKey, (err, payload) => {
+    if (!token) {
+        response.status(401).send("You are not logged-in");
+        return;
+    }
+
+    jwt.verify(token, config.jwt.ACCESS_TOKEN_SECRET, (err, payload) => {
+
+        if (err) {
+            if (err.message == "jwt expired") {
+                response.status(403).send("Your login session has expired");
+                return;
+            }
+    
+        }
 
         const user=payload.user;
 

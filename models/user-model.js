@@ -83,8 +83,6 @@ class User {
         }),
         isAdmin: Joi.number().min(0).max(1)
     };
-
-
 }
 
 
