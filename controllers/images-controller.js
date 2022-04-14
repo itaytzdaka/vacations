@@ -2,10 +2,6 @@ const express = require("express");
 const router = express.Router();
 const isAdmin = require("../middleware/is-admin");
 const formidable = require('formidable');
-<<<<<<< HEAD
-const path = require("path");
-=======
->>>>>>> 5594709dcbdb21e21aa190ddd2ec0fc4d886202d
 
 const fs = require("fs");
 
