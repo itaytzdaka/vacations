@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const isAdmin = require("../middleware/is-admin");
 const formidable = require('formidable');
+<<<<<<< HEAD
 const path = require("path");
+=======
+>>>>>>> 5594709dcbdb21e21aa190ddd2ec0fc4d886202d
 
 const fs = require("fs");
 
@@ -31,9 +34,7 @@ router.post("/upload-image", isAdmin, (request, response) => {
         }
 
         //save img locally
-        // fs.renameSync(image.filepath, "_front-end/assets/images/vacations/" + image.originalFilename);
-        //
-        fs.renameSync(image.filepath, path.join(__dirname, "./../_front-end/assets/images/vacations/" + image.originalFilename));
+        fs.renameSync(image.filepath, "_front-end/assets/images/vacations/" + image.originalFilename);
 
         response.end();
 
