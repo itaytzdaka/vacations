@@ -32,6 +32,7 @@ router.post("/upload-image", isAdmin, (request, response) => {
 
         //save img locally
         // fs.renameSync(image.filepath, "_front-end/assets/images/vacations/" + image.originalFilename);
+        //
         fs.renameSync(image.filepath, path.join(__dirname, "./../_front-end/assets/images/vacations/" + image.originalFilename));
 
         response.end();
