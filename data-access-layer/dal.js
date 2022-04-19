@@ -11,26 +11,26 @@ const mysql = require("mysql");
 
 let pool;
 
-pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-});
+// pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
+//     host: process.env.MYSQL_HOST,
+//     user: process.env.MYSQL_USER,
+//     password: process.env.MYSQL_PASSWORD,
+//     database: process.env.MYSQL_DATABASE
+// });
 
 
-// if (process.env.NODE_ENV === "production") {
-//     pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
-// }
+if (process.env.NODE_ENV === "production") {
+    pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
+}
 
-// else {
-//     pool = mysql.createPool({
-//         host: process.env.MYSQL_HOST,
-//         user: process.env.MYSQL_USER,
-//         password: process.env.MYSQL_PASSWORD,
-//         database: process.env.MYSQL_DATABASE
-//     });
-// }
+else {
+    pool = mysql.createPool({
+        host: process.env.MYSQL_HOST,
+        user: process.env.MYSQL_USER,
+        password: process.env.MYSQL_PASSWORD,
+        database: process.env.MYSQL_DATABASE
+    });
+}
 
 
 // Connect to the database: 
