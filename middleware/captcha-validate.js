@@ -1,21 +1,25 @@
 const axios = require("axios");
+const errorHandler = require("../helpers/error-handler");
 
-function isHuman(request, response, next) {
+async function isHuman(request, response, next) {
+
     const token = request.body.captchaToken;
-    console.log(token);
-    next();
+    const secret = process.env.RECAPTCHA_SECRET_KEY;
 
-    // const secret = process.env.RECAPTCHA_SECRET_KEY;
-
+    try {
+        const res = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`);
+        const human= res.data.success;
     
-    // const response = await fetch(
-    //     `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`,
-    //     {
-    //         method: "POST",
-    //     }
-    // );
-    // const data = await response.json();
-    // return data.success;
+        if(!human){
+            response.status(400).send("You are not fooling me, bot!");
+        }
+        else{
+            next();
+        }
+
+    } catch (error) {
+        response.status(500).send(errorHandler.getError(error));
+    }
 }
 
 module.exports = isHuman;

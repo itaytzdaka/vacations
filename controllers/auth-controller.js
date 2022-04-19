@@ -21,9 +21,7 @@ router.get("/captcha", (request, response)=>{
 
 //POST - register a new user - http://localhost:3000/api/auth/register
 router.post("/register",isHuman, async (request, response) => {
-    try {
-        console.log(request.body);
-        
+    try {        
         const userToAdd = new User(
             request.body.firstName,
             request.body.lastName,
