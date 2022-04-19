@@ -1,9 +1,7 @@
 const crypto = require("crypto");
 
-const salt = "MakeThingsGoRight";
-
 function hash(password){
-    return crypto.createHash("sha512", salt).update(password).digest("hex");
+    return crypto.createHash("sha512", process.env.SALT_KEY).update(password).digest("hex");
 }
 
 module.exports=hash;
