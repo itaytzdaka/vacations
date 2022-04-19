@@ -2,6 +2,7 @@ const express = require("express");
 const followsLogic = require("../vacations-logic/follows-logic");
 const isLoggedIn = require("../middleware/is-logged-in");
 const router = express.Router();
+const errorHandler = require("../helpers/error-handler");
 
 router.use(isLoggedIn);
 
@@ -12,7 +13,7 @@ router.get("/", async (request, response) => {
         response.json(follows);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -30,7 +31,7 @@ router.post("/", async (request, response) => {
         response.status(201).json(follow);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -42,7 +43,7 @@ router.delete("/:id", async (request, response) => {
         response.sendStatus(204);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 

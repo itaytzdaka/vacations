@@ -1,18 +1,23 @@
 //config file for connecting the DB.
-global.config = require(process.env.NODE_ENV === "production" ? "./config-prod" : "./config-dev");
+// global.config = require(process.env.NODE_ENV === "production" ? "./config-prod" : "./config-dev");
+
+//if development, load .env file
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 
 //create the server
 const express = require("express");
 const server = express();
 
 
-// const session = require("express-session");
-// server.use(session({
-//     name: "CandyShopSession", // Name of the Cookie
-//     secret: "CuteKittens", // Encryption key for the session id
-//     resave: true, // Start counting session time on each request.
-//     saveUninitialized: false // Don't create session automatically.
-// }));
+const session = require("express-session");
+server.use(session({
+    name: "CaptchaSession", // Name of the Cookie
+    secret: "notForRobots", // Encryption key for the session id
+    resave: true, // Start counting session time on each request.
+    saveUninitialized: false // Don't create session automatically.
+}));
 
 
 //localhost permission
@@ -22,6 +27,13 @@ const cors = require("cors");
 server.use(cors({
     origin: "http://localhost:3001",
     credentials: true //for alow passing cookies from client to server
+}));
+
+const expressRateLimit = require("express-rate-limit");
+server.use("/api/",expressRateLimit({
+    windowMs: 10 * 1000, //10 seconds
+    max: 20,
+    message: "Too much requests, Try again later."
 }));
 
 
@@ -106,7 +118,6 @@ socketServer.sockets.on("connection", socket => {
 
     socket.on("user-added-a-purchase-from-client", (purchase) => {
         console.log("user-added-a-purchase-from-client");
-        console.log(purchase);
         // Send that message to all clients: 
         socketServer.sockets.emit("purchase-added-from-server", purchase);
     });

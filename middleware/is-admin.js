@@ -10,7 +10,7 @@ function isAdmin(request, response, next) {
         return;
     }
 
-    jwt.verify(token, config.jwt.ACCESS_TOKEN_SECRET, (err, payload) => {
+    jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, payload) => {
 
         if (err) {
             if (err.message == "jwt expired") {

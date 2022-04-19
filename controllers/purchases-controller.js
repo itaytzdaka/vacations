@@ -2,6 +2,7 @@ const express = require("express");
 const purchaseLogic = require("../vacations-logic/purchase-logic");
 const isAdmin = require("../middleware/is-admin");
 const Purchase = require("../models/purchase-model");
+const errorHandler = require("../helpers/error-handler");
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get("/", isAdmin, async (request, response) => {
         response.json(purchases);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -42,7 +43,7 @@ router.post("/", async (request, response) => {
         response.json(addedPurchase);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 

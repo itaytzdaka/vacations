@@ -16,7 +16,7 @@ function isLoggedIn(request, response, next) {
     }
 
     // We have the token here - verify it:
-    jwt.verify(token, config.jwt.ACCESS_TOKEN_SECRET, (err, payload) => {
+    jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, payload) => {
 
         // If token expired or not legal:
         if (err) {

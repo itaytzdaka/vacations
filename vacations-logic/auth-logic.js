@@ -1,33 +1,44 @@
 const dal = require("../data-access-layer/dal");
+const hash = require("../helpers/hash");
 
 //register a user
 async function register(user) {
-    const sql = `INSERT INTO Users VALUES(
-        '${user.firstName}',
-        '${user.lastName}',
-        '${user.userName}',
-        '${user.password}',
-        0)`; // 0 = Not Admin
 
-    await dal.executeAsync(sql);
+    // Hash user password: 
+    user.password = hash(user.password);
+
+    const sql = `INSERT INTO Users VALUES(?,?,?,?,?)`; 
+
+    await dal.executeAsync(sql, [user.firstName, user.lastName, user.userName, user.password, 0]); // 0 = Not Admin
+
     user.isAdmin = 0;
+
+    //delete password for security
+    delete user.password;
+
     return user;
 }
 
 //login a user
 async function login(credentials) {
-    const sql = `SELECT * FROM Users
-        WHERE username = '${credentials.userName}'
-        AND password = '${credentials.password}'`;
-    const users = await dal.executeAsync(sql);
+
+    // Hash user password:
+    credentials.password = hash(credentials.password);
+
+    const sql = `
+    SELECT firstName, lastName, userName, isAdmin
+    FROM Users
+    WHERE username = ? AND password = ?`;
+    const users = await dal.executeAsync(sql, [credentials.userName, credentials.password]);
     const user = users[0];
+
     return user;
 }
 
 //update a user
 async function updateFullUser(user) {
-    const sql = `UPDATE users SET firstName = '${user.firstName}', lastName = '${user.lastName}', password = '${user.password}', isAdmin = ${user.isAdmin} WHERE userName = '${user.userName}'`;
-    const info = await dal.executeAsync(sql);
+    const sql = `UPDATE users SET firstName = ?, lastName = ?, password = ?, isAdmin = ? WHERE userName = ?`;
+    const info = await dal.executeAsync(sql, [user.firstName, user.lastName, user.password, user.isAdmin, user.userName]);
     return info.affectedRows === 0 ? null : user;
 };
 

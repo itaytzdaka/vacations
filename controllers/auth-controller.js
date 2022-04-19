@@ -4,12 +4,26 @@ const authLogic = require("../vacations-logic/auth-logic");
 const User = require("../models/user-model");
 const jwt = require("jsonwebtoken");
 const isAdmin = require("../middleware/is-admin");
-const res = require("express/lib/response");
+const isHuman = require("../middleware/captcha-validate");
+const errorHandler = require("../helpers/error-handler");
+const svgCaptcha = require("svg-captcha");
 
+
+router.get("/captcha", (request, response)=>{
+    const captcha = svgCaptcha.create();
+    const captchaText = captcha.text;
+    const captchaImage = captcha.data;
+
+    request.session.captchaText = captchaText;
+
+    response.type("svg").send(captchaImage);
+}); 
 
 //POST - register a new user - http://localhost:3000/api/auth/register
-router.post("/register", async (request, response) => {
+router.post("/register",isHuman, async (request, response) => {
     try {
+        console.log(request.body);
+        
         const userToAdd = new User(
             request.body.firstName,
             request.body.lastName,
@@ -30,19 +44,16 @@ router.post("/register", async (request, response) => {
         //register user (not admin)
         const user = await authLogic.register(userToAdd);
 
-        //delete password for security
-        delete user.password;
-
         //create token
-        const accessToken = jwt.sign({ user }, config.jwt.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
-        const refreshToken = jwt.sign({ user }, config.jwt.REFRESH_TOKEN_SECRET, { expiresIn: "24h" });
+        const accessToken = jwt.sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
+        const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
 
         response.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
         //return user and accessToken
         response.status(201).json({ user, accessToken });
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -59,12 +70,9 @@ router.post("/login", async (request, response) => {
             return;
         }
 
-        //delete password for security
-        delete user.password;
-
         //create token
-        const accessToken = jwt.sign({ user }, config.jwt.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
-        const refreshToken = jwt.sign({ user }, config.jwt.REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
+        const accessToken = jwt.sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
+        const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
 
 
         response.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
@@ -72,7 +80,7 @@ router.post("/login", async (request, response) => {
         response.json({ user, accessToken });
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -83,7 +91,7 @@ router.get("/usersNames", async (request, response) => {
         response.json(usersNames);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -118,7 +126,7 @@ router.put("/:userName", isAdmin, async (request, response) => {
         response.json(updatedUser);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -134,7 +142,7 @@ router.get("/refresh", (request, response) => {
         }
         const refreshToken = cookies.jwt;
 
-        jwt.verify(refreshToken, config.jwt.REFRESH_TOKEN_SECRET, (err, payload) => {
+        jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, payload) => {
             // If token expired or not legal:
             if (err) {
                 // If token expired: 
@@ -148,14 +156,14 @@ router.get("/refresh", (request, response) => {
                 return;
             }
             const user = payload.user;
-            const accessToken = jwt.sign({ user }, config.jwt.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
+            const accessToken = jwt.sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
 
             //return user and accessToken
             response.json({ user, accessToken });
         });
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -169,7 +177,7 @@ router.get("/logout", (request, response) => {
         return response.sendStatus(204); //No content
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 

@@ -4,6 +4,7 @@ const isLoggedIn = require("../middleware/is-logged-in");
 const isAdmin = require("../middleware/is-admin");
 const Vacation = require("../models/vacation-model");
 const fs = require("fs");
+const errorHandler = require("../helpers/error-handler");
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get("/", async (request, response) => {
         response.json(vacations);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -32,7 +33,7 @@ router.get("/:id", async(request, response) => {
         response.json(vacation);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -60,7 +61,7 @@ router.post("/",isAdmin, async (request, response) => {
         response.json(addedVacation);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -103,7 +104,7 @@ router.put("/:id",isAdmin, async (request, response) => {
         response.json(updatedVacation);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
@@ -130,7 +131,7 @@ router.delete("/:id",isAdmin, async (request, response) => {
         response.sendStatus(204);
     }
     catch (err) {
-        response.status(500).send(err.message);
+        response.status(500).send(errorHandler.getError(err));
     }
 });
 
