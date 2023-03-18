@@ -48,17 +48,5 @@ router.post("/", async (request, response) => {
 });
 
 
-// DELETE a purchase
-// router.delete("/:id",isAdmin, async (request, response) => {
-//     try {
-//         const id = +request.params.id;
-//         await purchaseLogic.deletePurchase(id);
-//         response.sendStatus(204);
-//     }
-//     catch (err) {
-//         response.status(500).send(err.message);
-//     }
-// });
-
 
 module.exports = router;

@@ -1,36 +1,12 @@
 const mysql = require("mysql");
 
 // Create connection to the database:
-
-// const pool = mysql.createPool({
-//     host: config.mysql.host,
-//     user: config.mysql.user,
-//     password: config.mysql.password,
-//     database: config.mysql.database
-// });
-
-let pool;
-
-pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
+const pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
 });
-
-
-// if (process.env.NODE_ENV === "production") {
-//     pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL);
-// }
-
-// else {
-//     pool = mysql.createPool({
-//         host: process.env.MYSQL_HOST,
-//         user: process.env.MYSQL_USER,
-//         password: process.env.MYSQL_PASSWORD,
-//         database: process.env.MYSQL_DATABASE
-//     });
-// }
 
 
 // Connect to the database: 

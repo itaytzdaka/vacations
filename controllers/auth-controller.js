@@ -29,11 +29,11 @@ router.post("/register",isHuman, async (request, response) => {
             request.body.password
         );
 
-        // if username already exist - return some error (400) to the client...
 
         // Validate user data: 
         const errors = userToAdd.validatePostOrPut();
 
+        // if username already exist - return some error (400) to the client...
         if (errors) {
             response.status(400).send(errors);
             return;
@@ -42,12 +42,12 @@ router.post("/register",isHuman, async (request, response) => {
         //register user (not admin)
         const user = await authLogic.register(userToAdd);
 
-        //create token
+        //create access and refresh token
         const accessToken = jwt.sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
         const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
 
         response.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        //return user and accessToken
+        //return user and accessToken to the client
         response.status(201).json({ user, accessToken });
     }
     catch (err) {
@@ -68,13 +68,13 @@ router.post("/login", async (request, response) => {
             return;
         }
 
-        //create token
+        //create access and refresh token
         const accessToken = jwt.sign({ user }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
         const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
 
 
         response.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-        //return user and accessToken
+        //return user and accessToken to the client
         response.json({ user, accessToken });
     }
     catch (err) {
