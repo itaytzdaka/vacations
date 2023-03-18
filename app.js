@@ -57,16 +57,6 @@ server.use("/api/follows", followsController);
 server.use("/api/purchases", purchaseController);
 server.use("/", imagesController);
 
-// const formidable = require('express-formidable');
-// server.use(formidable());
-
-const fileUpload = require("express-fileupload");
-server.use(fileUpload());
-
-const bodyParser = require('body-parser');
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
-
 
 const path = require("path");
 

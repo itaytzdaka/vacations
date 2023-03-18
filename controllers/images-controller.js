@@ -49,17 +49,5 @@ router.post("/upload-image", isAdmin, upload.single('file'), (request, response)
 
 });
 
-router.delete("/:imageName", isAdmin, (request, response) => {
-    try {
-        const imageName = request.params.imageName;
-        const path = "./uploads/" + imageName;
-        fs.unlinkSync(path);
-        response.sendStatus(204);
-    }
-    catch (err) {
-        response.status(500).send(err.message);
-    }
-});
-
 
 module.exports = router;
