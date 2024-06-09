@@ -2,7 +2,7 @@ const dal = require("../data-access-layer/dal");
 
 //get all vacations
 async function getAllVacations() {
-    const sql = "SELECT * FROM Vacations";
+    const sql = "SELECT * FROM vacations";
     const vacations = await dal.executeAsync(sql);
     return vacations;
 }
