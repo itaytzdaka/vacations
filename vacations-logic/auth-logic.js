@@ -27,7 +27,7 @@ async function login(credentials) {
 
     const sql = `
     SELECT firstName, lastName, userName, isAdmin
-    FROM Users
+    FROM users
     WHERE username = ? AND password = ?`;
     const users = await dal.executeAsync(sql, [credentials.userName, credentials.password]);
     const user = users[0];
@@ -44,7 +44,7 @@ async function updateFullUser(user) {
 
 //get All Users Names
 async function getAllUsersNames() {
-    const sql = `SELECT userName FROM Users`;
+    const sql = `SELECT userName FROM users`;
     const usersNames = await dal.executeAsync(sql);
     return usersNames;
 }

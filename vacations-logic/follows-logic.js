@@ -1,13 +1,13 @@
 const dal = require("../data-access-layer/dal");
 
 async function getAllFollows() {
-    const sql = "SELECT * FROM Follows";
+    const sql = "SELECT * FROM follows";
     const follows = await dal.executeAsync(sql);
     return follows;
 }
 
 async function getOneFollow(follow) {
-    const sql = `SELECT * FROM Follows WHERE userName = ? AND vacationId = ?`;
+    const sql = `SELECT * FROM follows WHERE userName = ? AND vacationId = ?`;
     const follows = await dal.executeAsync(sql, [follow.userName, follow.vacationId]);
     return follows[0];
 }
